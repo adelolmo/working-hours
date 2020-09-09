@@ -59,8 +59,6 @@ func main() {
 		}
 
 		brake := time.Since(message.Timestamp)
-		fmt.Printf("%v\n", time.Now().Format("2006-01-02 15:04:05 -0700"))
-		fmt.Printf("lunch started at %v\n", message.Timestamp.Format("2006-01-02 15:04:05 -0700"))
 		fmt.Printf("Brake took %v minutes\n", math.Round(brake.Minutes()))
 
 		messages, err := tl.MessagesForDate(time.Now())
@@ -68,7 +66,7 @@ func main() {
 			log.Fatal(err)
 		}
 		workedTimeSoFar := workedTimeSoFar(messages)
-		fmt.Printf("worked minutes so far: %v\n", workedTimeSoFar.Minutes())
+		fmt.Printf("Worked time so far: %v\n", fmtDuration(workedTimeSoFar))
 		timeToWork := time.Now().
 			Add(8 * time.Hour).
 			Add(-workedTimeSoFar)
@@ -85,16 +83,6 @@ func main() {
 
 	case "stop":
 		fmt.Printf("%v\n", time.Now().Format("2006-01-02 15:04:05"))
-		messages, err := tl.MessagesForDate(time.Now())
-		if err != nil {
-			log.Fatal(err)
-		}
-		workedTimeSoFar := workedTimeSoFar(messages)
-		fmt.Printf("Worked time so far: %v\n", fmtDuration(workedTimeSoFar))
-
-		if workedTimeSoFar < 8*time.Hour {
-			fmt.Printf("Pending time: %v\n", fmtDuration(8*time.Hour-workedTimeSoFar))
-		}
 
 		messageContent := "afk"
 		if len(os.Args) == 3 {
@@ -104,6 +92,21 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		messages, err := tl.MessagesForDate(time.Now())
+		if err != nil {
+			log.Fatal(err)
+		}
+		workedTimeSoFar := workedTimeSoFar(messages)
+		fmt.Printf("Worked time so far: %v\n", fmtDuration(workedTimeSoFar))
+
+		if workedTimeSoFar < 8*time.Hour {
+			fmt.Printf("Pending time: %v\n", fmtDuration(8*time.Hour-workedTimeSoFar))
+		} else {
+			fmt.Printf("Worked overtime: %v\n", fmtDuration(workedTimeSoFar-8*time.Hour))
+		}
+
+
 	default:
 		fmt.Println("Not a valid option")
 		os.Exit(1)
