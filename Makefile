@@ -3,10 +3,10 @@ BINDIR=$(HOME)/bin
 
 install:
 	@echo Installing...
-	go build -o working-hours
-	install -Dm755 working-hours $(DESTDIR)$(BINDIR)/working-hours
-	rm -rf working-hours
+	go build -o wh
+	install -Dm755 wh $(DESTDIR)$(BINDIR)/wh
+	rm -rf wh
 
 uninstall:
 	@echo Uninstalling...
-	rm -rf $(DESTDIR)$(BINDIR)/working-hours
+	rm -rf $(DESTDIR)$(BINDIR)/wh
