@@ -14,8 +14,19 @@ var timeLogFile string
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Missing option: start, stop")
-		os.Exit(1)
+		fmt.Print(`Usage: working-hours <command>
+
+List of commands:
+  start [message]  Adds an entry in the timelog for starting work. An additional message is optional.
+  stop [message]   Adds an entry in the timelog for stopping work. An additional message is optional.
+  report <type>    Shows a report for the selected type.
+                   List of types:
+                     * day
+                     * week
+                     * month
+                     * year
+`)
+		os.Exit(0)
 	}
 
 	configDir, err := os.UserConfigDir()
@@ -105,7 +116,6 @@ func main() {
 		} else {
 			fmt.Printf("Worked overtime: %v\n", fmtDuration(workedTimeSoFar-8*time.Hour))
 		}
-
 
 	default:
 		fmt.Println("Not a valid option")
