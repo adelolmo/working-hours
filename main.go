@@ -21,10 +21,10 @@ List of commands:
   stop [message]   Adds an entry in the timelog for stopping work. An additional message is optional.
   report <type>    Shows a report for the selected type.
                    List of types:
-                     * day
-                     * week
-                     * month
-                     * year
+                     * day    Worked hours today
+                     * week   Worked hours this week
+                     * month  Worked hours this month
+                     * year   Worked hours this year
 `)
 		os.Exit(0)
 	}
@@ -115,6 +115,38 @@ List of commands:
 			fmt.Printf("Time left at work: %v\n", fmtDuration(8*time.Hour-workedTimeSoFar))
 		} else {
 			fmt.Printf("Worked overtime: %v\n", fmtDuration(workedTimeSoFar-8*time.Hour))
+		}
+
+	case "report":
+		if len(os.Args) < 3 {
+			fmt.Println("Missing report type: day, week, month or year")
+			os.Exit(0)
+		}
+
+		switch os.Args[2] {
+		case "day":
+			messages, err := tl.MessagesForDate(time.Now())
+			if err != nil {
+				log.Fatal(err)
+			}
+			workedTimeSoFar := workedTimeSoFar(messages)
+			fmt.Printf("Total work done today: %v\n", fmtDuration(workedTimeSoFar))
+
+		case "week":
+			fmt.Printf("Total work done this week: ")
+			fmt.Println("not implemented")
+
+		case "month":
+			fmt.Printf("Total work done this month: ")
+			fmt.Println("not implemented")
+
+		case "year":
+			fmt.Printf("Total work done this year: ")
+			fmt.Println("not implemented")
+
+		default:
+			fmt.Println("Not a valid report type.")
+			os.Exit(1)
 		}
 
 	default:
