@@ -37,7 +37,7 @@ func main() {
 	option := os.Args[1]
 	switch option {
 	case "start":
-		fmt.Printf("%v\n", time.Now().Format("2006-01-02 15:04:05"))
+		fmt.Printf("Now is: %v\n", time.Now().Format("15:04:05"))
 
 		message, err := tl.LastMessage()
 		if err != nil {
@@ -66,7 +66,7 @@ func main() {
 			log.Fatal(err)
 		}
 		workedTimeSoFar := workedTimeSoFar(messages)
-		fmt.Printf("Worked time so far: %v\n", fmtDuration(workedTimeSoFar))
+		fmt.Printf("Total work done: %v\n", fmtDuration(workedTimeSoFar))
 		timeToWork := time.Now().
 			Add(8 * time.Hour).
 			Add(-workedTimeSoFar)
@@ -82,7 +82,7 @@ func main() {
 		}
 
 	case "stop":
-		fmt.Printf("%v\n", time.Now().Format("2006-01-02 15:04:05"))
+		fmt.Printf("Now is: %v\n", time.Now().Format("15:04:05"))
 
 		messageContent := "afk"
 		if len(os.Args) == 3 {
@@ -98,10 +98,10 @@ func main() {
 			log.Fatal(err)
 		}
 		workedTimeSoFar := workedTimeSoFar(messages)
-		fmt.Printf("Worked time so far: %v\n", fmtDuration(workedTimeSoFar))
+		fmt.Printf("Total work done: %v\n", fmtDuration(workedTimeSoFar))
 
 		if workedTimeSoFar < 8*time.Hour {
-			fmt.Printf("Pending time: %v\n", fmtDuration(8*time.Hour-workedTimeSoFar))
+			fmt.Printf("Time left at work: %v\n", fmtDuration(8*time.Hour-workedTimeSoFar))
 		} else {
 			fmt.Printf("Worked overtime: %v\n", fmtDuration(workedTimeSoFar-8*time.Hour))
 		}
