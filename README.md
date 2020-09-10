@@ -7,9 +7,9 @@ make
 
 ## Aliases
 ```shell script
-alias morning='working-hours start morning'
-alias back='working-hours start back'
-alias lunch='working-hours stop lunch'
-alias afk='working-hours stop afk'
-alias bye='working-hours stop bye'
+alias morning='wh start morning'
+alias back='wh start back'
+alias lunch='wh stop lunch'
+alias afk='wh stop afk'
+alias bye='wh stop bye'
 ```
