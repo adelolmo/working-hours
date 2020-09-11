@@ -53,6 +53,7 @@ func report() func(cmd *cobra.Command, args []string) {
 			}
 			workedTimeSoFar := workedTimeSoFar(messages)
 			fmt.Printf("Total work done today: %v\n", fmtDuration(workedTimeSoFar))
+			fmt.Printf("Finish work at %v\n", time.Now().Add(8*time.Hour-workedTimeSoFar).Format("15:04:05"))
 
 		case "week":
 			fmt.Printf("Total work done this week: ")
