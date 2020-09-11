@@ -21,7 +21,6 @@ import (
 	"github.com/spf13/cobra"
 	"log"
 	"os"
-	"path"
 	"time"
 )
 
@@ -44,21 +43,7 @@ to quickly create a Cobra application.`,
 
 func report() func(cmd *cobra.Command, args []string) {
 	return func(cmd *cobra.Command, args []string) {
-		configDir, err := os.UserConfigDir()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		_ = os.Mkdir(path.Join(configDir, "working-hours"), os.ModePerm)
-		timeLogFile := path.Join(configDir, "working-hours", "timelog.txt")
-		if _, err := os.Stat(timeLogFile); os.IsNotExist(err) {
-			_, err = os.Create(timeLogFile)
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
-
-		tl := timelog.New(timeLogFile)
+		tl := timelog.New(timelogFilename())
 
 		switch args[0] {
 		case "day":

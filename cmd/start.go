@@ -22,43 +22,27 @@ import (
 	"log"
 	"math"
 	"os"
-	"path"
 	"time"
 )
 
-// startCmd represents the start command
 var startCmd = &cobra.Command{
 	Use:   "start [message]",
 	Short: "Adds an entry in the timelog for starting work",
 	Long: `Add to the timelog that work starts/resumes now.
 It can be the beginning of the working day or coming back from a break (e.g lunch).`,
 	Example:
-`  You can and a message when starting the day:
+	`  You can and a message when starting the day:
     
     wk start 'good morning'
 
   Or to indicate that you're back from lunch or a break:
     
     wk start back`,
-	Args: cobra.MaximumNArgs(1),
-	DisableFlagParsing: true,
+	Args:                  cobra.MaximumNArgs(1),
+	DisableFlagParsing:    true,
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		configDir, err := os.UserConfigDir()
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		_ = os.Mkdir(path.Join(configDir, "working-hours"), os.ModePerm)
-		timeLogFile := path.Join(configDir, "working-hours", "timelog.txt")
-		if _, err := os.Stat(timeLogFile); os.IsNotExist(err) {
-			_, err = os.Create(timeLogFile)
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
-
-		tl := timelog.New(timeLogFile)
+		tl := timelog.New(timelogFilename())
 		fmt.Printf("Now is: %v\n", time.Now().Format("15:04:05"))
 
 		message, err := tl.LastMessage()
@@ -68,7 +52,7 @@ It can be the beginning of the working day or coming back from a break (e.g lunc
 
 		if message.Timestamp.Day() != time.Now().Day() {
 			fmt.Printf("Finish work at %v\n", time.Now().Add(8*time.Hour).Format("15:04:05"))
-			tl := timelog.New(timeLogFile)
+
 			messageContent := "morning"
 			if len(os.Args) == 3 {
 				messageContent = os.Args[2]
@@ -118,27 +102,4 @@ func init() {
 	// Cobra supports local flags which will only run when this command
 	// is called directly, e.g.:
 	// startCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-}
-
-func workedTimeSoFar(messages []timelog.Message) time.Duration {
-	workedHours := time.Duration(0)
-	starBlock := time.Time{}
-	for _, m := range messages {
-		if m.Type == timelog.StartWorking {
-			starBlock = m.Timestamp
-		}
-		if m.Type == timelog.StopWorking {
-			var diff = m.Timestamp.Sub(starBlock).Minutes()
-			workedHours = time.Duration(workedHours.Minutes()+diff) * time.Minute
-		}
-	}
-	return workedHours
-}
-
-func fmtDuration(d time.Duration) string {
-	d = d.Round(time.Minute)
-	h := d / time.Hour
-	d -= h * time.Hour
-	m := d / time.Minute
-	return fmt.Sprintf("%02d:%02d", h, m)
 }

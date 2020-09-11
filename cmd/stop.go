@@ -20,7 +20,6 @@ import (
 	"github.com/adelolmo/working-hours/timelog"
 	"log"
 	"os"
-	"path"
 	"time"
 
 	"github.com/spf13/cobra"
@@ -43,21 +42,8 @@ It can be the end of the working day or having a break (e.g lunch).`,
 	DisableFlagParsing:    true,
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
-		configDir, err := os.UserConfigDir()
-		if err != nil {
-			log.Fatal(err)
-		}
 
-		_ = os.Mkdir(path.Join(configDir, "working-hours"), os.ModePerm)
-		timeLogFile := path.Join(configDir, "working-hours", "timelog.txt")
-		if _, err := os.Stat(timeLogFile); os.IsNotExist(err) {
-			_, err = os.Create(timeLogFile)
-			if err != nil {
-				log.Fatal(err)
-			}
-		}
-
-		tl := timelog.New(timeLogFile)
+		tl := timelog.New(timelogFilename())
 
 		fmt.Printf("Now is: %v\n", time.Now().Format("15:04:05"))
 
@@ -65,7 +51,7 @@ It can be the end of the working day or having a break (e.g lunch).`,
 		if len(os.Args) == 3 {
 			messageContent = os.Args[2]
 		}
-		err = tl.Append(messageContent, timelog.StopWorking)
+		err := tl.Append(messageContent, timelog.StopWorking)
 		if err != nil {
 			log.Fatal(err)
 		}
