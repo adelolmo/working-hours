@@ -46,6 +46,12 @@ func workedTimeSoFar(messages []timelog.Message) time.Duration {
 			workedHours = time.Duration(workedHours.Minutes()+diff) * time.Minute
 		}
 	}
+
+	lastMessage := messages[len(messages)-1]
+	if lastMessage.Type == timelog.StartWorking {
+		return workedHours + time.Now().Sub(lastMessage.Timestamp)
+	}
+
 	return workedHours
 }
 
