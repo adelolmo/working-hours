@@ -45,7 +45,7 @@ It can be the end of the working day or having a break (e.g lunch).`,
 
 		tl := timelog.New(timelogFilename())
 
-		fmt.Printf("Now is: %v\n", time.Now().Format("15:04:05"))
+		fmt.Printf("Now is: %v\n", time.Now().Format("15:04"))
 
 		messageContent := "afk"
 		if len(os.Args) == 3 {

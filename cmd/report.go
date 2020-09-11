@@ -53,7 +53,7 @@ func report() func(cmd *cobra.Command, args []string) {
 			}
 			workedTimeSoFar := workedTimeSoFar(messages)
 			fmt.Printf("Total work done today: %v\n", fmtDuration(workedTimeSoFar))
-			fmt.Printf("Finish work at %v\n", time.Now().Add(8*time.Hour-workedTimeSoFar).Format("15:04:05"))
+			fmt.Printf("Finish work at %v\n", time.Now().Add(8*time.Hour-workedTimeSoFar).Format("15:04"))
 
 		case "week":
 			fmt.Printf("Total work done this week: ")
@@ -65,6 +65,10 @@ func report() func(cmd *cobra.Command, args []string) {
 
 		case "year":
 			fmt.Printf("Total work done this year: ")
+			fmt.Println("not implemented")
+
+		case "account":
+			fmt.Printf("Worked hours in your account: %d", 234)
 			fmt.Println("not implemented")
 
 		default:

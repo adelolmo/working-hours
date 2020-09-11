@@ -43,7 +43,7 @@ It can be the beginning of the working day or coming back from a break (e.g lunc
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		tl := timelog.New(timelogFilename())
-		fmt.Printf("Now is: %v\n", time.Now().Format("15:04:05"))
+		fmt.Printf("Now is: %v\n", time.Now().Format("15:04"))
 
 		message, err := tl.LastMessage()
 		if err != nil {
@@ -51,7 +51,7 @@ It can be the beginning of the working day or coming back from a break (e.g lunc
 		}
 
 		if message.Timestamp.Day() != time.Now().Day() {
-			fmt.Printf("Finish work at %v\n", time.Now().Add(8*time.Hour).Format("15:04:05"))
+			fmt.Printf("Finish work at %v\n", time.Now().Add(8*time.Hour).Format("15:04"))
 
 			messageContent := "morning"
 			if len(os.Args) == 3 {
