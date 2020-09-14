@@ -68,7 +68,7 @@ func report() func(cmd *cobra.Command, args []string) {
 			fmt.Printf("Total working days: %d\n", numberOfWorkingDays)
 
 			if workedTimeSoFar > numberOfWorkingHours {
-				fmt.Printf("Balance: %v\n", fmtDuration(numberOfWorkingHours-workedTimeSoFar))
+				fmt.Printf("Balance: %v\n", fmtDuration(workedTimeSoFar-numberOfWorkingHours))
 			} else {
 				fmt.Printf("Balance: -%v\n", fmtDuration(numberOfWorkingHours-workedTimeSoFar))
 			}
@@ -92,7 +92,7 @@ func report() func(cmd *cobra.Command, args []string) {
 			fmt.Printf("Total working days: %d\n", numberOfWorkingDays)
 
 			if workedTimeSoFar > numberOfWorkingHours {
-				fmt.Printf("Balance: %v\n", fmtDuration(numberOfWorkingHours-workedTimeSoFar))
+				fmt.Printf("Balance: %v\n", fmtDuration(workedTimeSoFar-numberOfWorkingHours))
 			} else {
 				fmt.Printf("Balance: -%v\n", fmtDuration(numberOfWorkingHours-workedTimeSoFar))
 			}
