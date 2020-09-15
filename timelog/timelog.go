@@ -156,3 +156,30 @@ func (l *Log) MessagesForDateRange(start, end time.Time) ([]Message, error) {
 	}
 	return messages, nil
 }
+func (l *Log) AllMessages() ([]Message, error) {
+	f, err := os.Open(l.filename)
+	if err != nil {
+		return []Message{}, err
+	}
+
+	var messages []Message
+	scanner := bufio.NewScanner(f)
+	var line string
+	for scanner.Scan() {
+		line = scanner.Text()
+		if len(line) == 0 {
+			continue
+		}
+		part := strings.Split(line, " ")
+		d, err := time.Parse(dateFormat, part[0])
+		if err != nil {
+			panic(err)
+		}
+		messages = append(messages, Message{
+			Timestamp: d,
+			Type:      ParseMessageType(part[1]),
+			Content:   part[2],
+		})
+	}
+	return messages, nil
+}

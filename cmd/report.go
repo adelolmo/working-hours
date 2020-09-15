@@ -98,12 +98,44 @@ func report() func(cmd *cobra.Command, args []string) {
 			}
 
 		case "year":
-			fmt.Printf("Total work done this year: ")
-			fmt.Println("not implemented")
+			now := time.Now()
+			currentLocation := now.Location()
+
+			firstOfJanuary := time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, currentLocation)
+			thirtyFirstOfDecember :=  time.Date(now.Year(), time.December, 31, 0, 0, 0, 0, currentLocation)
+
+			messages, err := tl.MessagesForDateRange(firstOfJanuary, thirtyFirstOfDecember)
+			if err != nil {
+				log.Fatal(err)
+			}
+			workedTimeSoFar := workedTimeSoFar(messages)
+			fmt.Printf("Total work done this year: %v\n", fmtDuration(workedTimeSoFar))
+
+			numberOfWorkingDays, numberOfWorkingHours := workedDaysAndHours(messages)
+			fmt.Printf("Total working days: %d\n", numberOfWorkingDays)
+
+			if workedTimeSoFar > numberOfWorkingHours {
+				fmt.Printf("Balance: %v\n", fmtDuration(workedTimeSoFar-numberOfWorkingHours))
+			} else {
+				fmt.Printf("Balance: -%v\n", fmtDuration(numberOfWorkingHours-workedTimeSoFar))
+			}
 
 		case "account":
-			fmt.Printf("Worked hours in your account: %d", 234)
-			fmt.Println("not implemented")
+			messages, err := tl.AllMessages()
+			if err != nil {
+				log.Fatal(err)
+			}
+			workedTimeSoFar := workedTimeSoFar(messages)
+			fmt.Printf("Total work done: %v\n", fmtDuration(workedTimeSoFar))
+
+			numberOfWorkingDays, numberOfWorkingHours := workedDaysAndHours(messages)
+			fmt.Printf("Total working days: %d\n", numberOfWorkingDays)
+
+			if workedTimeSoFar > numberOfWorkingHours {
+				fmt.Printf("Balance: %v\n", fmtDuration(workedTimeSoFar-numberOfWorkingHours))
+			} else {
+				fmt.Printf("Balance: -%v\n", fmtDuration(numberOfWorkingHours-workedTimeSoFar))
+			}
 
 		default:
 			fmt.Println("Not a valid report type.")
