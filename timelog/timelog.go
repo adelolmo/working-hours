@@ -8,7 +8,12 @@ import (
 	"time"
 )
 
-const dateFormat = "2006-01-0215:04:05-0700"
+const (
+	dateFormat = "2006-01-0215:04:05-0700"
+	messageDateColumn = 0
+	messageTypeColumn = 1
+	messageContentColumn = 2
+)
 
 type MessageType int
 
@@ -81,7 +86,7 @@ func (l *Log) LastMessage() (*Message, error) {
 	}
 
 	part := strings.Split(line, " ")
-	date, err := time.Parse(dateFormat, part[0])
+	date, err := time.Parse(dateFormat, part[messageDateColumn])
 	if err != nil {
 		return &Message{}, err
 	}
@@ -91,7 +96,8 @@ func (l *Log) LastMessage() (*Message, error) {
 	}
 	return &Message{
 		Timestamp: date,
-		Content:   part[1],
+		Type: ParseMessageType(part[messageTypeColumn]),
+		Content:   part[messageContentColumn],
 	}, nil
 }
 
@@ -112,15 +118,15 @@ func (l *Log) MessagesForDate(date time.Time) ([]Message, error) {
 		}
 
 		part := strings.Split(line, " ")
-		d, err := time.Parse(dateFormat, part[0])
+		d, err := time.Parse(dateFormat, part[messageDateColumn])
 		if err != nil {
 			panic(err)
 		}
 		if d.Day() == date.Day() {
 			messages = append(messages, Message{
 				Timestamp: d,
-				Type:      ParseMessageType(part[1]),
-				Content:   part[2],
+				Type:      ParseMessageType(part[messageTypeColumn]),
+				Content:   part[messageContentColumn],
 			})
 		}
 	}
@@ -142,15 +148,15 @@ func (l *Log) MessagesForDateRange(start, end time.Time) ([]Message, error) {
 			continue
 		}
 		part := strings.Split(line, " ")
-		d, err := time.Parse(dateFormat, part[0])
+		d, err := time.Parse(dateFormat, part[messageDateColumn])
 		if err != nil {
 			panic(err)
 		}
 		if d.After(start) && d.Before(end) {
 			messages = append(messages, Message{
 				Timestamp: d,
-				Type:      ParseMessageType(part[1]),
-				Content:   part[2],
+				Type:      ParseMessageType(part[messageTypeColumn]),
+				Content:   part[messageContentColumn],
 			})
 		}
 	}
@@ -171,14 +177,14 @@ func (l *Log) AllMessages() ([]Message, error) {
 			continue
 		}
 		part := strings.Split(line, " ")
-		d, err := time.Parse(dateFormat, part[0])
+		d, err := time.Parse(dateFormat, part[messageDateColumn])
 		if err != nil {
 			panic(err)
 		}
 		messages = append(messages, Message{
 			Timestamp: d,
-			Type:      ParseMessageType(part[1]),
-			Content:   part[2],
+			Type:      ParseMessageType(part[messageTypeColumn]),
+			Content:   part[messageContentColumn],
 		})
 	}
 	return messages, nil
