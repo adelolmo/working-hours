@@ -28,8 +28,8 @@ import (
 // stopCmd represents the stop command
 var stopCmd = &cobra.Command{
 	Use:   "stop [message]",
-	Short: "Adds an entry in the timelog for stopping work",
-	Long: `Add to the timelog that work stops now.
+	Short: "Stops the current working session",
+	Long: `Creates an entry in the timelog indicating that the active work session ends now.
 It can be the end of the working day or having a break (e.g lunch).`,
 	Example: `  You can and a message when ending the day:
     
@@ -42,8 +42,16 @@ It can be the end of the working day or having a break (e.g lunch).`,
 	DisableFlagParsing:    true,
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
-
 		tl := timelog.New(timelogFilename())
+
+		message, err := tl.LastMessage()
+		if err != nil {
+			log.Fatal(err)
+		}
+		if message.Type == timelog.StopWorking {
+			fmt.Println("Attention! There is no work session started.\nYou have to start a new working session before.")
+			return
+		}
 
 		fmt.Printf("Now is: %v\n", time.Now().Format("15:04"))
 
@@ -51,7 +59,7 @@ It can be the end of the working day or having a break (e.g lunch).`,
 		if len(os.Args) == 3 {
 			messageContent = os.Args[2]
 		}
-		err := tl.Append(messageContent, timelog.StopWorking)
+		err = tl.Append(messageContent, timelog.StopWorking)
 		if err != nil {
 			log.Fatal(err)
 		}

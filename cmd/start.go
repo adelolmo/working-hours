@@ -27,8 +27,8 @@ import (
 
 var startCmd = &cobra.Command{
 	Use:   "start [message]",
-	Short: "Adds an entry in the timelog for starting work",
-	Long: `Add to the timelog that work starts/resumes now.
+	Short: "Starts a working session",
+	Long: `Creates an entry in the timelog indicating that a work session starts.
 It can be the beginning of the working day or coming back from a break (e.g lunch).`,
 	Example:
 	`  You can and a message when starting the day:
@@ -43,12 +43,19 @@ It can be the beginning of the working day or coming back from a break (e.g lunc
 	DisableFlagsInUseLine: true,
 	Run: func(cmd *cobra.Command, args []string) {
 		tl := timelog.New(timelogFilename())
-		fmt.Printf("Now is: %v\n", time.Now().Format("15:04"))
 
 		message, err := tl.LastMessage()
 		if err != nil {
 			log.Fatal(err)
 		}
+
+		if message.Type == timelog.StartWorking {
+			fmt.Printf("Attention! A work session was already started at %s.\nYou have to end this session before starting a new one.\n",
+				message.Timestamp.Format("15:04"))
+			return
+		}
+
+		fmt.Printf("Now is: %v\n", time.Now().Format("15:04"))
 
 		if message.Timestamp.Day() != time.Now().Day() {
 			fmt.Printf("Finish work at %v\n", time.Now().Add(8*time.Hour).Format("15:04"))
