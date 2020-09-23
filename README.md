@@ -1,4 +1,8 @@
-# working-hours
+# Working Hours
+
+Tool for tracking how long you work.
+
+It provides reports with insides about your working days.
 
 ## Build
 ```

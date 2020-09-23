@@ -27,7 +27,7 @@ func (t MessageType) String() string {
 	return [...]string{"0", "1"}[t]
 }
 
-func ParseMessageType(t string) MessageType {
+func parseMessageType(t string) MessageType {
 	switch t {
 	case "0":
 		return StartWorking
@@ -96,7 +96,7 @@ func (l *Log) LastMessage() (*Message, error) {
 	}
 	return &Message{
 		Timestamp: date,
-		Type: ParseMessageType(part[messageTypeColumn]),
+		Type:      parseMessageType(part[messageTypeColumn]),
 		Content:   part[messageContentColumn],
 	}, nil
 }
@@ -125,7 +125,7 @@ func (l *Log) MessagesForDate(date time.Time) ([]Message, error) {
 		if d.Day() == date.Day() {
 			messages = append(messages, Message{
 				Timestamp: d,
-				Type:      ParseMessageType(part[messageTypeColumn]),
+				Type:      parseMessageType(part[messageTypeColumn]),
 				Content:   part[messageContentColumn],
 			})
 		}
@@ -155,7 +155,7 @@ func (l *Log) MessagesForDateRange(start, end time.Time) ([]Message, error) {
 		if d.After(start) && d.Before(end) {
 			messages = append(messages, Message{
 				Timestamp: d,
-				Type:      ParseMessageType(part[messageTypeColumn]),
+				Type:      parseMessageType(part[messageTypeColumn]),
 				Content:   part[messageContentColumn],
 			})
 		}
@@ -183,7 +183,7 @@ func (l *Log) AllMessages() ([]Message, error) {
 		}
 		messages = append(messages, Message{
 			Timestamp: d,
-			Type:      ParseMessageType(part[messageTypeColumn]),
+			Type:      parseMessageType(part[messageTypeColumn]),
 			Content:   part[messageContentColumn],
 		})
 	}
