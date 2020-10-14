@@ -9,9 +9,9 @@ import (
 )
 
 const (
-	dateFormat = "2006-01-0215:04:05-0700"
-	messageDateColumn = 0
-	messageTypeColumn = 1
+	dateFormat           = "2006-01-0215:04:05-0700"
+	messageDateColumn    = 0
+	messageTypeColumn    = 1
 	messageContentColumn = 2
 )
 
@@ -122,13 +122,21 @@ func (l *Log) MessagesForDate(date time.Time) ([]Message, error) {
 		if err != nil {
 			panic(err)
 		}
-		if d.Day() == date.Day() {
-			messages = append(messages, Message{
-				Timestamp: d,
-				Type:      parseMessageType(part[messageTypeColumn]),
-				Content:   part[messageContentColumn],
-			})
+		if d.Day() != date.Day() {
+			continue
 		}
+		if d.Month() != date.Month() {
+			continue
+		}
+		if d.Year() != date.Year() {
+			continue
+		}
+
+		messages = append(messages, Message{
+			Timestamp: d,
+			Type:      parseMessageType(part[messageTypeColumn]),
+			Content:   part[messageContentColumn],
+		})
 	}
 	return messages, nil
 }
