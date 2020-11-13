@@ -1,5 +1,5 @@
 /*
-Copyright © 2020 NAME HERE <EMAIL ADDRESS>
+Copyright © 2020 Andoni del Olmo <andoni.delolmo@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -36,9 +36,6 @@ var rootCmd = &cobra.Command{
   Long: `Working-Hours is a tool for tracking how long you work.
 It provides reports with insides about your working days.
 `,
-  // Uncomment the following line if your bare application
-  // has an action associated with it:
-  //	Run: func(cmd *cobra.Command, args []string) { },
 }
 
 // Execute adds all child commands to the root command and sets flags appropriately.
@@ -52,41 +49,26 @@ func Execute() {
 
 func init() {
   cobra.OnInitialize(initConfig)
-
-  // Here you will define your flags and configuration settings.
-  // Cobra supports persistent flags, which, if defined here,
-  // will be global for your application.
-
-  //rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.working-hours.yaml)")
-
-
-  // Cobra also supports local flags, which will only run
-  // when this action is called directly.
-  //rootCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 }
 
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
   if cfgFile != "" {
-    // Use config file from the flag.
     viper.SetConfigFile(cfgFile)
   } else {
-    // Find home directory.
     home, err := homedir.Dir()
     if err != nil {
       fmt.Println(err)
       os.Exit(1)
     }
 
-    // Search config in home directory with name ".working-hours" (without extension).
     viper.AddConfigPath(home)
     viper.SetConfigName(".working-hours")
   }
 
-  viper.AutomaticEnv() // read in environment variables that match
+  viper.AutomaticEnv()
 
-  // If a config file is found, read it in.
   if err := viper.ReadInConfig(); err == nil {
     fmt.Println("Using config file:", viper.ConfigFileUsed())
   }

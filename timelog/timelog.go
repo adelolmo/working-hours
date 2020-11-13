@@ -20,11 +20,12 @@ type MessageType int
 const (
 	StartWorking MessageType = iota
 	StopWorking
+	StopWorkingSick
 	Unknown
 )
 
 func (t MessageType) String() string {
-	return [...]string{"0", "1"}[t]
+	return [...]string{"0", "1", "2"}[t]
 }
 
 func parseMessageType(t string) MessageType {
@@ -33,6 +34,8 @@ func parseMessageType(t string) MessageType {
 		return StartWorking
 	case "1":
 		return StopWorking
+	case "2":
+		return StopWorkingSick
 	default:
 		return Unknown
 	}

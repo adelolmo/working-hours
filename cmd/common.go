@@ -38,10 +38,11 @@ func workedTimeSoFar(messages []timelog.Message) time.Duration {
 	workedHours := time.Duration(0)
 	starBlock := time.Time{}
 	for _, m := range messages {
-		if m.Type == timelog.StartWorking {
+		switch m.Type {
+		case timelog.StartWorking:
 			starBlock = m.Timestamp
-		}
-		if m.Type == timelog.StopWorking {
+
+		case timelog.StopWorking, timelog.StopWorkingSick:
 			var diff = m.Timestamp.Sub(starBlock).Minutes()
 			workedHours = time.Duration(workedHours.Minutes()+diff) * time.Minute
 		}

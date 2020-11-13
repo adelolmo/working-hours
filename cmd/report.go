@@ -1,5 +1,5 @@
 /*
-Copyright © 2020 NAME HERE <EMAIL ADDRESS>
+Copyright © 2020 Andoni del Olmo <andoni.delolmo@gmail.com>
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -39,6 +39,10 @@ to quickly create a Cobra application.`,
 	DisableFlagsInUseLine: true,
 	ValidArgs:             []string{"day", "week", "month", "year"},
 	Run:                   report(),
+}
+
+func init() {
+	rootCmd.AddCommand(reportCmd)
 }
 
 func report() func(cmd *cobra.Command, args []string) {
@@ -102,7 +106,7 @@ func report() func(cmd *cobra.Command, args []string) {
 			currentLocation := now.Location()
 
 			firstOfJanuary := time.Date(now.Year(), time.January, 1, 0, 0, 0, 0, currentLocation)
-			thirtyFirstOfDecember :=  time.Date(now.Year(), time.December, 31, 0, 0, 0, 0, currentLocation)
+			thirtyFirstOfDecember := time.Date(now.Year(), time.December, 31, 0, 0, 0, 0, currentLocation)
 
 			messages, err := tl.MessagesForDateRange(firstOfJanuary, thirtyFirstOfDecember)
 			if err != nil {
@@ -128,13 +132,16 @@ func report() func(cmd *cobra.Command, args []string) {
 			workedTimeSoFar := workedTimeSoFar(messages)
 			fmt.Printf("Total work done: %v\n", fmtDuration(workedTimeSoFar))
 
-			numberOfWorkingDays, numberOfWorkingHours := workedDaysAndHours(messages)
+			numberOfWorkingDays, maxWorkingDuration := workedDaysAndHours(messages)
 			fmt.Printf("Total working days: %d\n", numberOfWorkingDays)
 
-			if workedTimeSoFar > numberOfWorkingHours {
-				fmt.Printf("Balance: %v\n", fmtDuration(workedTimeSoFar-numberOfWorkingHours))
+			sickDuration := sickHours(messages)
+
+			totalWorkDuration := workedTimeSoFar + sickDuration
+			if totalWorkDuration > maxWorkingDuration {
+				fmt.Printf("Balance: %v\n", fmtDuration(totalWorkDuration-maxWorkingDuration))
 			} else {
-				fmt.Printf("Balance: -%v\n", fmtDuration(numberOfWorkingHours-workedTimeSoFar))
+				fmt.Printf("Balance: -%v\n", fmtDuration(maxWorkingDuration-totalWorkDuration))
 			}
 
 		default:
@@ -156,6 +163,30 @@ func workedDaysAndHours(messages []timelog.Message) (int, time.Duration) {
 	}
 	numberOfWorkingHours := time.Duration(8*numberOfWorkingDays) * time.Hour
 	return numberOfWorkingDays, numberOfWorkingHours
+}
+
+func sickHours(messages []timelog.Message) time.Duration {
+	//numberOfSickMinutes := 0
+	sickDuration := time.Duration(0)
+	workDuration := time.Duration(0)
+	dayOfMonth := 0
+	//indexDayStart := 0
+
+	for i, message := range messages {
+		if dayOfMonth != message.Timestamp.Day() {
+			dayOfMonth = message.Timestamp.Day()
+			workDuration = time.Duration(0)
+			//indexDayStart = i
+		}
+		if message.Type == timelog.StopWorking {
+			workDuration += message.Timestamp.Sub(messages[i-1].Timestamp)
+		}
+		if message.Type == timelog.StopWorkingSick {
+			workDuration += message.Timestamp.Sub(messages[i-1].Timestamp)
+			sickDuration = 8*time.Hour - workDuration
+		}
+	}
+	return sickDuration
 }
 
 func weekRange(year, week int) (start, end time.Time) {
@@ -180,19 +211,4 @@ func weekStart(year, week int) time.Time {
 	t = t.AddDate(0, 0, (week-w)*7)
 
 	return t
-}
-
-func init() {
-	rootCmd.AddCommand(reportCmd)
-
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// reportCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// reportCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
-	//reportCmd.Flags().StringVar("type", []string{"day","week","month","year"},  "Help message for toggle")
 }
