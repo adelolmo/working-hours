@@ -2,11 +2,16 @@
 
 Tool for tracking how long you work.
 
-It provides reports with insides about your working days.
+It provides reports with insights about your working days.
 
 ## Build
 ```
 make
+```
+
+## Install
+```
+make && sudo make install
 ```
 
 ## Aliases

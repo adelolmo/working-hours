@@ -34,7 +34,7 @@ var rootCmd = &cobra.Command{
   Use:   "wh",
   Short: "Working-Hours is a tool for tracking how long you work",
   Long: `Working-Hours is a tool for tracking how long you work.
-It provides reports with insides about your working days.
+It provides reports with insights about your working days.
 `,
 }
 
