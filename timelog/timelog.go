@@ -85,7 +85,9 @@ func (l *Log) LastMessage() (*Message, error) {
 		line = scanner.Text()
 	}
 	if len(line) == 0 {
-		return &Message{}, nil
+		return &Message{
+			Type: Unknown,
+		}, nil
 	}
 
 	part := strings.Split(line, " ")
