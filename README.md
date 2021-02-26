@@ -54,14 +54,14 @@ The generated `timelog.txt` for the above example looks like this:
 You can have insights about your working time.
 
 ### Daily
-To get an overview of the day type `whr day`:
+Use the command `whr day` to get an overview of the day:
 ```
 Total work done today: 05:27
 Finish work at 18:24
 ```
 
 ### Weekly
-To get an overview of the week type `whr week`:
+Use the command `whr week` to get an overview of the week:
 ```
 Total work done this week: 23:24
 Total working days: 3
@@ -69,7 +69,7 @@ Balance: -00:36
 ```
 
 ### Monthly
-To get an overview of the month type `whr month`:
+Use the command `whr month` to get an overview of the month:
 ```
 Total work done this month: 103:49
 Total working days: 13
@@ -77,7 +77,7 @@ Balance: -00:11
 ```
 
 ### Yearly
-To get an overview of the year type `whr year`:
+Use the command `whr year` to get an overview of the year:
 ```
 Total work done this year: 257:00
 Total working days: 32
@@ -85,10 +85,10 @@ Balance: 01:00
 ```
 
 ### Account
-To get an overview of your account type `whr account`:
+Use the command `whr account` to get an overview of your account:
 ```
 Total work done: 777:28
 Total working days: 98
 Balance: -01:30
 ```
-`Balance` indicate if you have overtime (positive value), or you miss working time (negative value).
+`Balance` indicates if you have overtime (positive value), or you miss working time (negative value).
