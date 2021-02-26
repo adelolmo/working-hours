@@ -33,7 +33,7 @@ var stopCmd = &cobra.Command{
 It can be the end of the working day or having a break (e.g lunch).`,
 	Example: `  You can and a message when ending the day:
     
-    wk stop 'finish work'
+    wh stop 'finish work'
 
   Or to indicate that you go for lunch or a break:
     
@@ -49,7 +49,8 @@ It can be the end of the working day or having a break (e.g lunch).`,
 			log.Fatal(err)
 		}
 		if message.Type == timelog.StopWorking {
-			fmt.Println("Attention! There is no work session started.\nYou have to start a new working session before.")
+			fmt.Println("Attention! There is no work session started.")
+			fmt.Println("You have to start a new working session before.")
 			return
 		}
 

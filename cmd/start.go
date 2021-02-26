@@ -33,7 +33,7 @@ It can be the beginning of the working day or coming back from a break (e.g lunc
 	Example:
 	`  You can and a message when starting the day:
     
-    wk start 'good morning'
+    wh start 'good morning'
 
   Or to indicate that you're back from lunch or a break:
     
@@ -50,8 +50,9 @@ It can be the beginning of the working day or coming back from a break (e.g lunc
 		}
 
 		if message.Type == timelog.StartWorking {
-			fmt.Printf("Attention! A work session was already started at %s.\nYou have to end this session before starting a new one.\n",
+			fmt.Printf("Attention! A work session was already started at %s.\n",
 				message.Timestamp.Format("15:04"))
+			fmt.Println("You have to end this session before starting a new one.")
 			return
 		}
 
