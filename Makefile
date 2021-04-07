@@ -1,11 +1,11 @@
 MAKEFLAGS += --silent
 BINDIR=$(DESTDIR)/usr/bin
 
-compile:
+wh:
 	@echo Compiling...
 	go build -o wh
 
-install: compile
+install: wh
 	@echo Installing...
 	install -Dm755 wh $(BINDIR)/wh
 	rm -rf wh

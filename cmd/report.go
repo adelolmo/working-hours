@@ -26,7 +26,7 @@ import (
 
 // reportCmd represents the report command
 var reportCmd = &cobra.Command{
-	Use:   "report [day, week, month, year]",
+	Use:   "report [day, week, month, year, account]",
 	Short: "Shows a report for the selected type",
 	Long: `A longer description that spans multiple lines and likely contains examples
 and usage of using your command. For example:
@@ -37,7 +37,7 @@ to quickly create a Cobra application.`,
 	Args:                  cobra.MinimumNArgs(1),
 	DisableFlagParsing:    true,
 	DisableFlagsInUseLine: true,
-	ValidArgs:             []string{"day", "week", "month", "year"},
+	ValidArgs:             []string{"day", "week", "month", "year", "account"},
 	Run:                   report(),
 }
 
