@@ -51,13 +51,8 @@ func report() func(cmd *cobra.Command, args []string) {
 
 		switch args[0] {
 		case "day":
-			messages, err := tl.MessagesForDate(time.Now())
-			if err != nil {
-				log.Fatal(err)
-			}
-			workedTimeSoFar := workedTimeSoFar(messages)
-			fmt.Printf("Total work done today: %v\n", fmtDuration(workedTimeSoFar))
-			fmt.Printf("Finish work at %v\n", time.Now().Add(8*time.Hour-workedTimeSoFar).Format("15:04"))
+			daily := dailyReport(tl)
+			fmt.Println(daily)
 
 		case "week":
 			start, end := weekRange(time.Now().ISOWeek())
@@ -125,30 +120,46 @@ func report() func(cmd *cobra.Command, args []string) {
 			}
 
 		case "account":
-			messages, err := tl.AllMessages()
-			if err != nil {
-				log.Fatal(err)
-			}
-			workedTimeSoFar := workedTimeSoFar(messages)
-			fmt.Printf("Total work done: %v\n", fmtDuration(workedTimeSoFar))
-
-			numberOfWorkingDays, maxWorkingDuration := workedDaysAndHours(messages)
-			fmt.Printf("Total working days: %d\n", numberOfWorkingDays)
-
-			sickDuration := sickHours(messages)
-
-			totalWorkDuration := workedTimeSoFar + sickDuration
-			if totalWorkDuration > maxWorkingDuration {
-				fmt.Printf("Balance: %v\n", fmtDuration(totalWorkDuration-maxWorkingDuration))
-			} else {
-				fmt.Printf("Balance: -%v\n", fmtDuration(maxWorkingDuration-totalWorkDuration))
-			}
+			account := accountReport(tl)
+			fmt.Println(account)
 
 		default:
 			fmt.Println("Not a valid report type.")
 			os.Exit(1)
 		}
 	}
+}
+
+func dailyReport(tl *timelog.Log) string {
+	messages, err := tl.MessagesForDate(time.Now())
+	if err != nil {
+		log.Fatal(err)
+	}
+	workedTimeSoFar := workedTimeSoFar(messages)
+	return fmt.Sprintf("Total work done today: %v\n", fmtDuration(workedTimeSoFar)) +
+		fmt.Sprintf("Finish work at %v\n", time.Now().Add(8*time.Hour-workedTimeSoFar).Format("15:04"))
+}
+
+func accountReport(tl *timelog.Log) string {
+	messages, err := tl.AllMessages()
+	if err != nil {
+		log.Fatal(err)
+	}
+	workedTimeSoFar := workedTimeSoFar(messages)
+	r := fmt.Sprintf("Total work done: %v\n", fmtDuration(workedTimeSoFar))
+
+	numberOfWorkingDays, maxWorkingDuration := workedDaysAndHours(messages)
+	r += fmt.Sprintf("Total working days: %d\n", numberOfWorkingDays)
+
+	sickDuration := sickHours(messages)
+
+	totalWorkDuration := workedTimeSoFar + sickDuration
+	if totalWorkDuration > maxWorkingDuration {
+		r += fmt.Sprintf("Balance: %v\n", fmtDuration(totalWorkDuration-maxWorkingDuration))
+	} else {
+		r += fmt.Sprintf("Balance: -%v\n", fmtDuration(maxWorkingDuration-totalWorkDuration))
+	}
+	return r
 }
 
 // https://github.com/icza/gox/blob/master/timex/timex.go
@@ -166,11 +177,9 @@ func workedDaysAndHours(messages []timelog.Message) (int, time.Duration) {
 }
 
 func sickHours(messages []timelog.Message) time.Duration {
-	//numberOfSickMinutes := 0
 	sickDuration := time.Duration(0)
 	workDuration := time.Duration(0)
 	dayOfMonth := 0
-	//indexDayStart := 0
 
 	for i, message := range messages {
 		if dayOfMonth != message.Timestamp.Day() {
@@ -183,7 +192,7 @@ func sickHours(messages []timelog.Message) time.Duration {
 		}
 		if message.Type == timelog.StopWorkingSick {
 			workDuration += message.Timestamp.Sub(messages[i-1].Timestamp)
-			sickDuration = 8*time.Hour - workDuration
+			sickDuration += 8*time.Hour - workDuration
 		}
 	}
 	return sickDuration
