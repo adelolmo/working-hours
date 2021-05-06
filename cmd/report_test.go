@@ -1,16 +1,14 @@
 package cmd
 
 import (
-	"fmt"
 	"github.com/adelolmo/working-hours/timelog"
 	"os"
 	"path"
+	"strings"
 	"testing"
 )
 
 func TestAccountReportWithOneSickDay(t *testing.T) {
-
-	tempDir := os.TempDir()
 	tlog := `2021-04-1509:00:00+0200 0 morning
 2021-04-1512:00:00+0200 1 afk
 2021-04-1512:30:00+0200 0 back
@@ -24,31 +22,22 @@ func TestAccountReportWithOneSickDay(t *testing.T) {
 2021-04-1912:30:00+0200 0 back
 2021-04-1917:30:00+0200 1 bye
 `
-	f, err := os.Create(path.Join(tempDir,"timelog-test.txt"))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	_, err = f.WriteString(tlog)
-	if err != nil {
-		fmt.Println(err)
-		f.Close()
-		return
-	}
+	f := createTimelog(tlog)
+	defer os.Remove(f.Name())
+	defer os.Remove(path.Dir(f.Name()))
 
 	tl := timelog.New(f.Name())
+	actual := accountReport(tl)
 
-	report := accountReport(tl)
+	expected := []string{"Total work done: 21:30",
+		"Total working days: 3",
+		"Balance: -00:00"}
 
-	expected := "Total work done: 21:30\nTotal working days: 3\nBalance: -00:00\n"
-	if report != expected {
-		t.Fatal("argg" + report)
-	}
+	assertReport(t, expected, actual)
 }
 
 func TestAccountReportWithTwoSickDays(t *testing.T) {
 
-	tempDir := os.TempDir()
 	tlog := `2021-04-1509:00:00+0200 0 morning
 2021-04-1512:00:00+0200 1 afk
 2021-04-1512:30:00+0200 0 back
@@ -64,24 +53,52 @@ func TestAccountReportWithTwoSickDays(t *testing.T) {
 2021-04-2009:00:00+0200 0 morning
 2021-04-2010:30:00+0200 2 sick-two
 `
-	f, err := os.Create(path.Join(tempDir,"timelog-test.txt"))
-	if err != nil {
-		fmt.Println(err)
-		return
-	}
-	_, err = f.WriteString(tlog)
-	if err != nil {
-		fmt.Println(err)
-		f.Close()
-		return
-	}
+	f := createTimelog(tlog)
+	defer os.Remove(f.Name())
+	defer os.Remove(path.Dir(f.Name()))
 
 	tl := timelog.New(f.Name())
+	actual := accountReport(tl)
 
-	report := accountReport(tl)
+	expected := []string{"Total work done: 23:00",
+		"Total working days: 4",
+		"Balance: -00:00"}
 
-	expected := "Total work done: 23:00\nTotal working days: 4\nBalance: -00:00\n"
-	if report != expected {
-		t.Fatal("argg" + report)
+	assertReport(t, expected, actual)
+}
+
+func createTimelog(tlog string) *os.File {
+	tmpDir, err := os.MkdirTemp("", "working-hours")
+	if err != nil {
+		panic(err)
+	}
+
+	f, err := os.Create(path.Join(tmpDir, "timelog.txt"))
+	if err != nil {
+		panic(err)
+	}
+
+	_, err = f.WriteString(tlog)
+	if err != nil {
+		f.Close()
+		panic(err)
+	}
+
+	return f
+}
+
+func assertReport(t *testing.T, expected []string, report string) {
+	r := strings.Split(report, "\n")
+
+	fail := false
+	for i := range expected {
+		if r[i] != expected[i] {
+			fail = true
+		}
+	}
+	if fail {
+		message := "\nExpected ->\t" + strings.Join(expected, "\t")
+		message += "\nActual ->\t" + strings.Join(r, "\t")
+		t.Fatal(message)
 	}
 }

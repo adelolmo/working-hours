@@ -1,4 +1,4 @@
-#MAKEFLAGS += --silent
+MAKEFLAGS += --silent
 BINDIR=$(DESTDIR)/usr/bin
 BIN=wh
 
