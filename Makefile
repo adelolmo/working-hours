@@ -1,15 +1,20 @@
-MAKEFLAGS += --silent
+#MAKEFLAGS += --silent
 BINDIR=$(DESTDIR)/usr/bin
+BIN=wh
 
-wh:
+$(BIN): test
 	@echo Compiling...
-	go build -o wh
+	go build -o $(BIN)
 
-install: wh
+test:
+	go clean -testcache
+	go test ./...
+
+install: $(BIN)
 	@echo Installing...
-	install -Dm755 wh $(BINDIR)/wh
-	rm -rf wh
+	install -Dm755 $(BIN) $(BINDIR)/$(BIN)
+	rm -rf $(BIN)
 
 uninstall:
 	@echo Uninstalling...
-	rm -rf $(BINDIR)/wh
+	rm -rf $(BINDIR)/$(BIN)
