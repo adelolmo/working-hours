@@ -1,6 +1,6 @@
 module github.com/adelolmo/working-hours
 
-go 1.14
+go 1.16
 
 require (
 	github.com/mitchellh/go-homedir v1.1.0

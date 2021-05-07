@@ -52,7 +52,7 @@ func report() func(cmd *cobra.Command, args []string) {
 		switch args[0] {
 		case "day":
 			daily := dailyReport(tl)
-			fmt.Println(daily)
+			fmt.Print(daily)
 
 		case "week":
 			start, end := weekRange(time.Now().ISOWeek())
@@ -121,7 +121,7 @@ func report() func(cmd *cobra.Command, args []string) {
 
 		case "account":
 			account := accountReport(tl)
-			fmt.Println(account)
+			fmt.Print(account)
 
 		default:
 			fmt.Println("Not a valid report type.")
