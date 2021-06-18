@@ -1,6 +1,6 @@
 # Working Hours
 
-Tool for tracking how long you work.
+CLI tool for tracking how long you work.
 
 It provides reports with insights about your working days.
 
