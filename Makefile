@@ -2,6 +2,8 @@ MAKEFLAGS += --silent
 BINDIR=$(DESTDIR)/usr/bin
 BIN=wh
 
+.PHONY: test tidy vendor install uninstall
+
 $(BIN): test
 	@echo Compiling...
 	go build -o $(BIN)
@@ -9,6 +11,12 @@ $(BIN): test
 test:
 	go clean -testcache
 	go test ./...
+
+tidy:
+	go mod tidy
+
+vendor: tidy
+	go mod vendor
 
 install: $(BIN)
 	@echo Installing...
