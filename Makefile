@@ -2,10 +2,11 @@ MAKEFLAGS += --silent
 BINDIR=$(DESTDIR)/usr/bin
 BIN=wh
 
-.PHONY: test tidy vendor install uninstall
+.PHONY: all build test tidy vendor install uninstall
 
-$(BIN): test
-	@echo Compiling...
+all: build
+
+build:
 	go build -o $(BIN)
 
 test:
@@ -18,11 +19,10 @@ tidy:
 vendor: tidy
 	go mod vendor
 
-install: $(BIN)
-	@echo Installing...
+install:
 	install -Dm755 $(BIN) $(BINDIR)/$(BIN)
-	rm -rf $(BIN)
+	install wh-completion.bash $(DESTDIR)/etc/bash_completion.d/
 
 uninstall:
-	@echo Uninstalling...
 	rm -rf $(BINDIR)/$(BIN)
+	rm -rf $(DESTDIR)/etc/bash_completion.d/wh-completion.bash
