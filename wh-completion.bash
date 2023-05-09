@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-function _foo()
+function _wh_completions()
 {
   latest="${COMP_WORDS[$COMP_CWORD]}"
   prev="${COMP_WORDS[$COMP_CWORD - 1]}"
@@ -19,4 +19,4 @@ function _foo()
   return 0
 }
 
-complete -F _foo wh
+complete -F _wh_completions wh
