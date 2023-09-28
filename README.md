@@ -53,6 +53,8 @@ The generated `timelog.txt` for the above example looks like this:
 ## Reporting
 You can have insights about your working time.
 
+Be aware that currently a work day is fixed to 8 hours.
+
 ### Daily
 Use the command `whr day` to get an overview of the day:
 ```
